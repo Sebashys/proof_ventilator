@@ -11,6 +11,33 @@
 import sys
 import time
 import zmq
+import string
+import random
+import hashlib
+
+def hashString(s):
+    sha = hashlib.sha256()
+    sha.update(s.encode('ascii'))
+    return sha.hexdigest()
+
+def generation(challenge, size = 25):
+    answer = ''.join(random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits)
+                      for x in range(size))
+    attempt = challenge + answer
+    return attempt, answer
+
+def proofOfWork(challenge):
+    found = False
+    attempts = 0
+    while not found:
+        attempt, answer = generation(challenge, 64)
+        hash = hashString(attempt)
+        if hash.startswith('000'):
+            found = True
+            print(hash)
+        attempts += 1
+    print(attempts)
+    return answer
 
 context = zmq.Context()
 
@@ -39,13 +66,14 @@ while True:
         message = receiver.recv_string()
 
         # Process task
-        workload = int(message)  # Workload in msecs
+        challenge = message  # Workload
 
         # Do the work
-        time.sleep(workload / 1000.0)
+        answer=proofOfWork(challenge)
 
         # Send results to sink
-        sender.send_string(message)
+        print(answer)
+        sender.send_string(answer)
 
         # Simple progress indicator for the viewer
         sys.stdout.write(".")
@@ -54,10 +82,10 @@ while True:
     # Any waiting controller command acts as 'KILL'
     if socks.get(controller) == zmq.POLLIN:
         print("kill")
+        break
 
 # Finished
 receiver.close()
 sender.close()
 controller.close()
 context.term()
-

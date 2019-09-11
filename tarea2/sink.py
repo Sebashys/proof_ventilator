@@ -11,6 +11,12 @@
 import sys
 import time
 import zmq
+import hashlib
+
+def hashString(s):
+    sha = hashlib.sha256()
+    sha.update(s.encode('ascii'))
+    return sha.hexdigest()
 
 context = zmq.Context()
 
@@ -28,20 +34,25 @@ receiver.recv()
 # Start our clock now
 tstart = time.time()
 
-# Process 100 confirmiations
-for task_nbr in range(100):
-    receiver.recv()
-    if task_nbr % 10 == 0:
-        sys.stdout.write(":")
-    else:
-        sys.stdout.write(".")
-    sys.stdout.flush()
+# # Process 100 confirmiations
+# for task_nbr in range(100):
+#     receiver.recv()
+#     if task_nbr % 10 == 0:
+#         sys.stdout.write(":")
+#     else:
+#         sys.stdout.write(".")
+#     sys.stdout.flush()
+
+answer= receiver.recv_string()
+
 
 # Calculate and report duration of batch
 tend = time.time()
 tdiff = tend - tstart
 total_msec = tdiff * 1000
 print("Total elapsed time: %d msec" % total_msec)
+print (answer)
+print (hashString(answer))
 
 # Send kill signal to workers
 controller.send(b"KILL")
@@ -50,4 +61,3 @@ controller.send(b"KILL")
 receiver.close()
 controller.close()
 context.term()
-

@@ -22,10 +22,15 @@ sink.send(b'0')
 random.seed()
 
 totalTime = 0
-for task in range(100):
-    workload = random.randint(1,100)
-    totalTime += workload
-    workers.send_string(u'%i' % workload)
+
+# for task in range(100):
+#     workload = random.randint(1,100)
+#     totalTime += workload
+#     workers.send_string(u'%i' % workload)
+
+for task in range(2):
+    workers.send_string('challenging')
+
 
 print("Total expected cost: %s msec" % totalTime)
 while True:
