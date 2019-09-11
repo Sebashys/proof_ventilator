@@ -52,7 +52,6 @@ tdiff = tend - tstart
 total_msec = tdiff * 1000
 print("Total elapsed time: %d msec" % total_msec)
 print (answer)
-print (hashString(answer))
 
 # Send kill signal to workers
 controller.send(b"KILL")

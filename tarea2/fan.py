@@ -1,6 +1,7 @@
 import zmq
 import random
 import time
+import sys
 
 context = zmq.Context()
 
@@ -19,7 +20,7 @@ print("sending tasks to workers")
 
 sink.send(b'0')
 
-random.seed()
+#random.seed()
 
 totalTime = 0
 
@@ -28,10 +29,5 @@ totalTime = 0
 #     totalTime += workload
 #     workers.send_string(u'%i' % workload)
 
-for task in range(1):
-    workers.send_string('challenging')
-
-
-print("Total expected cost: %s msec" % totalTime)
-while True:
-    pass
+for task in range(int(sys.argv[2])):
+    workers.send_string('hola mundo')

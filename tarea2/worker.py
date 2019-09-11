@@ -65,17 +65,17 @@ found = False
 
 while not found:
     socks = dict(poller.poll())
-
+    time.sleep(5)
 
     # Any waiting controller command acts as 'KILL'
     if socks.get(controller) == zmq.POLLIN:
         message = controller.recv_string()
-        #print(message)
-        found = True
+        print(message)
+        #found = True
         break
 
-
-    if socks.get(receiver) == zmq.POLLIN:
+    # Any waiting controller command acts as 'KILL'
+    elif socks.get(receiver) == zmq.POLLIN:
         message = receiver.recv_string()
 
         # Process task
