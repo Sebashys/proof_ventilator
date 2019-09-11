@@ -31,8 +31,9 @@ def proofOfWork(challenge):
     attempts = 0
     while not found:
         attempt, answer = generation(challenge, 64)
+
         hash = hashString(attempt)
-        if hash.startswith('000'):
+        if hash.startswith('0000'):
             found = True
             print(hash)
         attempts += 1
@@ -59,8 +60,20 @@ poller = zmq.Poller()
 poller.register(receiver, zmq.POLLIN)
 poller.register(controller, zmq.POLLIN)
 # Process messages from both sockets
-while True:
+
+found = False
+
+while not found:
     socks = dict(poller.poll())
+
+
+    # Any waiting controller command acts as 'KILL'
+    if socks.get(controller) == zmq.POLLIN:
+        message = controller.recv_string()
+        #print(message)
+        found = True
+        break
+
 
     if socks.get(receiver) == zmq.POLLIN:
         message = receiver.recv_string()
@@ -69,21 +82,14 @@ while True:
         challenge = message  # Workload
 
         # Do the work
-        answer=proofOfWork(challenge)
+        answer =proofOfWork(challenge)
 
         # Send results to sink
-        print(answer)
         sender.send_string(answer)
 
-        # Simple progress indicator for the viewer
-        sys.stdout.write(".")
-        sys.stdout.flush()
 
-    # Any waiting controller command acts as 'KILL'
-    if socks.get(controller) == zmq.POLLIN:
-        print("kill")
-        break
 
+print("finish!")
 # Finished
 receiver.close()
 sender.close()

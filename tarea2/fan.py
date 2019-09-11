@@ -28,7 +28,7 @@ totalTime = 0
 #     totalTime += workload
 #     workers.send_string(u'%i' % workload)
 
-for task in range(2):
+for task in range(1):
     workers.send_string('challenging')
 
 
