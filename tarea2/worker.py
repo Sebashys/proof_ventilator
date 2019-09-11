@@ -37,7 +37,7 @@ def proofOfWork(challenge):
             found = True
             print(hash)
         attempts += 1
-    print("numero de intentos =>",attempts)
+    print("numero de intentos ->",attempts)
     return answer
 
 context = zmq.Context()
@@ -86,3 +86,12 @@ while not found:
 
         # Send results to sink
         sender.send_string(answer)
+
+
+
+
+# Finished
+receiver.close()
+sender.close()
+controller.close()
+context.term()
