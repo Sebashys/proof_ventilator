@@ -54,7 +54,7 @@ print("Total elapsed time: %d msec" % total_msec)
 print (answer)
 
 # Send kill signal to workers
-controller.send(b"KILL")
+controller.send(b"KILL signal from sink")
 
 # Finished
 receiver.close()

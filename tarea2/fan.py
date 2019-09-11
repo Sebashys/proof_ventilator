@@ -31,3 +31,8 @@ totalTime = 0
 
 for task in range(int(sys.argv[2])):
     workers.send_string('hola mundo')
+
+
+workers.close()
+sink.close()
+context.term()

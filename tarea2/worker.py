@@ -37,7 +37,7 @@ def proofOfWork(challenge):
             found = True
             print(hash)
         attempts += 1
-    print(attempts)
+    print("numero de intentos =>",attempts)
     return answer
 
 context = zmq.Context()
@@ -65,14 +65,14 @@ found = False
 
 while not found:
     socks = dict(poller.poll())
-    time.sleep(5)
+    time.sleep(1)
 
     # Any waiting controller command acts as 'KILL'
     if socks.get(controller) == zmq.POLLIN:
         message = controller.recv_string()
         print(message)
-        #found = True
-        break
+        found = True
+        #break
 
     # Any waiting controller command acts as 'KILL'
     elif socks.get(receiver) == zmq.POLLIN:
@@ -86,12 +86,3 @@ while not found:
 
         # Send results to sink
         sender.send_string(answer)
-
-
-
-print("finish!")
-# Finished
-receiver.close()
-sender.close()
-controller.close()
-context.term()
